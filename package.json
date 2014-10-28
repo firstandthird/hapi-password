@@ -16,7 +16,6 @@
   "homepage": "https://github.com/firstandthird/hapi-password",
   "dependencies": {
     "boom": "^2.6.0",
-    "handlebars": "^2.0.0",
     "hoek": "^2.8.0"
   },
   "devDependencies": {
