@@ -7,7 +7,7 @@ server.pack.register(password, function(err) {
     password: 'password',
     cookieName: 'demo-login',
     loginRoute: '/auth',
-    enableRoute: false
+    enableGETRoute: false
   });
 
   server.route({
