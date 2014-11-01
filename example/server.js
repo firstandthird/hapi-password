@@ -3,7 +3,7 @@ var password = require('../');
 
 var server = new Hapi.Server(8000);
 server.pack.register(password, function(err) {
-  server.auth.strategy('password', 'hapi-password', true, {
+  server.auth.strategy('password', 'password', true, {
     password: 'password',
     cookieName: 'demo-login',
     loginRoute: '/auth',
