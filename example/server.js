@@ -13,7 +13,7 @@ server.register({
     password: 'password',
     cookieName: 'demo-login',
     loginForm: {
-      //name: 'hapi-password example',
+      name: 'hapi-password example',
       description: 'password is password.  duh'
     }
   });
