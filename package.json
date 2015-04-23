@@ -1,11 +1,8 @@
 {
   "name": "hapi-password",
   "version": "0.0.1",
-  "description": "Basic password authentication",
+  "description": "Simple password authentication",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/firstandthird/hapi-password.git"
@@ -16,9 +13,14 @@
   "homepage": "https://github.com/firstandthird/hapi-password",
   "dependencies": {
     "boom": "^2.6.0",
+    "handlebars": "^3.0.2",
     "hoek": "^2.8.0"
   },
   "devDependencies": {
-    "hapi": "^6.11.1"
-  }
+    "hapi": "^8.4.0"
+  },
+  "keywords": [
+    "hapi",
+    "password"
+  ]
 }
