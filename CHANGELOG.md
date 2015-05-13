@@ -1,4 +1,11 @@
 
+0.3.0 / 2015-05-13
+==================
+
+  * fixed spacing if no description
+  * be able to set a ttl for the password cookie
+
+
 0.2.0 / 2015-04-28
 ==================
 
