@@ -1,4 +1,12 @@
 
+0.4.0 / 2015-09-26
+==================
+
+  * pass in text password via query instead of salted
+  * must pass in salt
+  * allow setting or disabling the query key.  fixing so it actually works
+  * remove default password and throw error if nothing passed in
+
 0.3.0 / 2015-05-13
 ==================
 
