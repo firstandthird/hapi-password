@@ -13,6 +13,7 @@ server.register({
     password: 'password',
     cookieName: 'demo-login',
     ttl: 1000*60*5,
+    queryKey: 'token',
     loginForm: {
       name: 'hapi-password example',
       description: 'password is password.  duh'
