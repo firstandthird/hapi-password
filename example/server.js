@@ -11,6 +11,7 @@ server.register({
 }, function(err) {
   server.auth.strategy('password', 'password', true, {
     password: 'password',
+    salt: 'here is a salt',
     cookieName: 'demo-login',
     ttl: 1000*60*5,
     queryKey: 'token',
