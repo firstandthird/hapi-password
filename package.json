@@ -22,5 +22,8 @@
   "keywords": [
     "hapi",
     "password"
-  ]
+  ],
+  "scripts": {
+    "example": "nodemon example/server"
+  }
 }
