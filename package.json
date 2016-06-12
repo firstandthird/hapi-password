@@ -12,18 +12,19 @@
   },
   "homepage": "https://github.com/firstandthird/hapi-password",
   "dependencies": {
-    "boom": "^2.6.0",
-    "handlebars": "^3.0.2",
-    "hoek": "^2.8.0"
+    "boom": "^3.2.1",
+    "handlebars": "^4.0.5",
+    "hoek": "^4.0.1"
   },
   "devDependencies": {
-    "hapi": "^8.4.0"
+    "hapi": "^13.4.1",
+    "nodemon": "1.9.2"
   },
   "keywords": [
     "hapi",
     "password"
   ],
   "scripts": {
-    "example": "nodemon example/server"
+    "example": "nodemon -e 'js html' example/server"
   }
 }
