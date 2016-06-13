@@ -1,4 +1,13 @@
 
+0.6.0 / 2016-06-12
+==================
+
+  * added option for logout endpoint
+  * option to ask users name when logging in
+  * don't limit example server to localhost
+  * updated depedencies
+  * added example npm script
+
 0.5.0 / 2015-10-23
 ==================
 
