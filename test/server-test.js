@@ -155,7 +155,6 @@ lab.test('allows login when credentials are posted ', (done) => {
             'Cookie': response.headers['set-cookie'][0].split(";")[0] + ';'
           }
         }, (getResponse) => {
-          console.log(getResponse.result);
           code.expect(getResponse.statusCode).to.equal(200);
           code.expect(getResponse.result).to.equal('success!');
           done();
