@@ -18,13 +18,17 @@
   },
   "devDependencies": {
     "hapi": "^13.4.1",
-    "nodemon": "1.9.2"
+    "nodemon": "1.9.2",
+    "eslint": "^2.9.0",
+    "eslint-config-firstandthird": "^2.0.0"
   },
   "keywords": [
     "hapi",
     "password"
   ],
   "scripts": {
+    "test": "lab -e test",
+    "lint": "eslint .",
     "example": "nodemon -e 'js html' example/server"
   }
 }

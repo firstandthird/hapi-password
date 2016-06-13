@@ -1,14 +1,14 @@
-var Hapi = require('hapi');
+'use strict';
+const Hapi = require('hapi');
 
-var server = new Hapi.Server();
+const server = new Hapi.Server();
 server.connection({ port: 8000 });
 
 server.register({
   register: require('../'),
   options: {
-
   }
-}, function(err) {
+}, (err) => {
   server.auth.strategy('password', 'password', true, {
     password: 'password',
     salt: 'here is a salt',
@@ -26,13 +26,13 @@ server.register({
     method: 'GET',
     path: '/',
     config: {
-      handler: function(request, reply) {
+      handler: (request, reply) => {
         reply(request.auth);
       }
     }
   });
 
-  server.start(function(err) {
+  server.start((err) => {
     console.log('Server started at:', server.info.uri);
   });
 });
