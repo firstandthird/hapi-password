@@ -1,7 +1,7 @@
 var Hapi = require('hapi');
 
 var server = new Hapi.Server();
-server.connection({ host: 'localhost', port: 8000 });
+server.connection({ port: 8000 });
 
 server.register({
   register: require('../'),
