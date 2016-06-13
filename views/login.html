@@ -30,6 +30,7 @@
         text-transform: uppercase;
         margin-bottom: 5px;
       }
+      input[type="text"],
       input[type="password"] {
         padding: 5px;
         width: 100%;
@@ -49,7 +50,7 @@
   </head>
   <body>
     <div class="wrapper">
-      <h1>{{name}}</h1>
+      <h1>{{formTitle}}</h1>
       {{#if description}}
         <p class="description">{{description}}</p>
       {{/if}}
@@ -57,8 +58,12 @@
         {{#if error}}
           <p class="error">Invalid Password</p>
         {{/if}}
-        <label for="password">Password:</label>
-        <input type="password" name="password"/>
+        {{#if askName}}
+        <label for="hpwd_name">Name:</label>
+        <input id="hpwd_name" type="text" name="name" value="{{userName}}"/>
+        {{/if}}
+        <label for="hpwd_pass">Password:</label>
+        <input id="hpwd_pass" type="password" name="password"/>
         {{#if next}}
         <input type="hidden" name="next" value="{{next}}"/>
         {{/if}}

@@ -17,7 +17,8 @@ server.register({
     queryKey: 'token',
     loginForm: {
       name: 'hapi-password example',
-      description: 'password is password.  duh'
+      description: 'password is password.  duh',
+      askName: true
     }
   });
 
