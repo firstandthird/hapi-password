@@ -1,7 +1,7 @@
 var Hapi = require('hapi');
 
 var server = new Hapi.Server();
-server.connection({ host: 'localhost', port: 8000 });
+server.connection({ port: 8000 });
 
 server.register({
   register: require('../'),
@@ -17,7 +17,8 @@ server.register({
     queryKey: 'token',
     loginForm: {
       name: 'hapi-password example',
-      description: 'password is password.  duh'
+      description: 'password is password.  duh',
+      askName: true
     }
   });
 
