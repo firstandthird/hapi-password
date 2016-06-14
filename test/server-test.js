@@ -4,7 +4,6 @@ const code = require('code');
 const lab = exports.lab = require('lab').script();
 const hapiPassword = require('../index.js');
 
-
 let server;
 lab.beforeEach((done) => {
   server = new Hapi.Server({ });
@@ -30,7 +29,7 @@ lab.test('should redirect if credentials not posted ', (done) => {
       password: 'password',
       salt: 'here is a salt',
       cookieName: 'demo-login',
-      ttl: 1000*60*5,
+      ttl: 1000 * 60 * 5,
       queryKey: 'token',
       loginForm: {
         name: 'hapi-password example',
@@ -69,7 +68,7 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
       password: 'password',
       salt: 'here is a salt',
       cookieName: 'demo-login',
-      ttl: 1000*60*5,
+      ttl: 1000 * 60 * 5,
       queryKey: 'token',
       loginForm: {
         name: 'hapi-password example',
@@ -82,11 +81,11 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
       path: '/success',
       config: {
         handler: (request, reply) => {
-          return reply("success!");
+          return reply('success!');
         }
       }
     });
-    server.start(()=>{
+    server.start(() => {
       server.inject({
         url: '/login',
         method: 'POST',
@@ -118,7 +117,7 @@ lab.test('allows login when credentials are posted ', (done) => {
       password: 'password',
       salt: 'here is a salt',
       cookieName: 'demo-login',
-      ttl: 1000*60*5,
+      ttl: 1000 * 60 * 5,
       queryKey: 'token',
       loginForm: {
         name: 'hapi-password example',
@@ -131,11 +130,11 @@ lab.test('allows login when credentials are posted ', (done) => {
       path: '/success',
       config: {
         handler: (request, reply) => {
-          return reply("success!");
+          return reply('success!');
         }
       }
     });
-    server.start(()=>{
+    server.start(() => {
       server.inject({
         url: '/login',
         method: 'POST',
@@ -149,10 +148,11 @@ lab.test('allows login when credentials are posted ', (done) => {
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
         code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        const cookieString = response.headers['set-cookie'][0].split(";")[0] + ';';
         server.inject({
           url: response.headers.location,
           headers: {
-            'Cookie': response.headers['set-cookie'][0].split(";")[0] + ';'
+            Cookie: cookieString
           }
         }, (getResponse) => {
           code.expect(getResponse.statusCode).to.equal(200);
