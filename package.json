@@ -1,6 +1,6 @@
 {
   "name": "hapi-password",
-  "version": "0.6.0",
+  "version": "1.0.0",
   "description": "Simple password authentication",
   "main": "index.js",
   "repository": {

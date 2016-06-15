@@ -1,4 +1,11 @@
 
+1.0.0 / 2016-06-15
+==================
+
+  * removed query.api/queryKey options
+  * updated package and lib/ example/ files
+  * travis, readme, eslint added, lab tests added
+
 0.6.0 / 2016-06-12
 ==================
 
