@@ -175,12 +175,10 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
       password: {
         'a password': {
           // some optional credentials information:
-          // currently not actually used by hapi-password
           name: 'Who Is There'
         },
         'another password': {
           // some optional credentials information:
-          // currently not actually used by hapi-password
           name: 'Interrupting Cow'
         }
       },
@@ -244,13 +242,11 @@ lab.test('returns the correct credentials for a given password ', (done) => {
       password: {
         'a password': {
           // some optional credentials information:
-          // currently not actually used by hapi-password
           name: 'Who Is There',
           role: 'serf'
         },
         'another password': {
           // some optional credentials information:
-          // currently not actually used by hapi-password
           name: 'Interrupting Cow',
           role: 'admin'
         }
