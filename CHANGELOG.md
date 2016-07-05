@@ -1,4 +1,9 @@
 
+2.0.0 / 2016-07-05
+==================
+
+  * allows options.password to be specified as an object
+
 1.1.0 / 2016-06-20
 ==================
 
