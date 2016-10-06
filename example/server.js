@@ -1,7 +1,12 @@
 'use strict';
 const Hapi = require('hapi');
 const server = new Hapi.Server();
-server.connection({ port: 8000 });
+server.connection({
+  port: 8000,
+  state: {
+    isSecure: false
+  }
+});
 
 server.register({
   register: require('../'),
