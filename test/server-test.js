@@ -55,7 +55,6 @@ lab.test('should redirect if credentials not posted ', (done) => {
     });
   });
 });
-
 lab.test('passes back a security cookie when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
@@ -98,13 +97,13 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
         code.expect(response.statusCode).to.equal(302);
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+        code.expect(response.headers['set-cookie'][0]).to.include('Secure;');
         done();
       });
     });
   });
 });
-
 lab.test('allows login when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
@@ -147,7 +146,7 @@ lab.test('allows login when credentials are posted ', (done) => {
         code.expect(response.statusCode).to.equal(302);
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
         const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
         server.inject({
           url: response.headers.location,
@@ -214,7 +213,7 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
         code.expect(response.statusCode).to.equal(302);
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
         const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
         server.inject({
           url: response.headers.location,
@@ -283,7 +282,7 @@ lab.test('returns the correct credentials for a given password ', (done) => {
         code.expect(response.statusCode).to.equal(302);
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
         const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
         server.inject({
           url: response.headers.location,
@@ -344,7 +343,7 @@ lab.test('allows login when credentials are posted even if name has a space in i
         code.expect(response.statusCode).to.equal(302);
         code.expect(response.headers.location).to.equal('/success');
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0].indexOf('demo-login')).to.be.greaterThan(-1);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
         const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
         server.inject({
           url: response.headers.location,
@@ -356,6 +355,109 @@ lab.test('allows login when credentials are posted even if name has a space in i
           code.expect(getResponse.result).to.equal('success!');
           done();
         });
+      });
+    });
+  });
+});
+lab.test('able to pass in isSecure option to cookie setting', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {}
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.auth.strategy('password', 'password', true, {
+      // turn off the isSecure option, by default it will be true:
+      isSecure: false,
+      password: 'password',
+      salt: 'here is a salt',
+      cookieName: 'demo-login',
+      ttl: 1000 * 60 * 5,
+      queryKey: 'token',
+      loginForm: {
+        name: 'hapi-password example',
+        description: 'password is password.  duh',
+        askName: true
+      }
+    });
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        code.expect(response.headers.location).to.equal('/success');
+        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+        // will not contain the Secure header:
+        code.expect(response.headers['set-cookie'][0]).to.not.include('Secure;');
+        done();
+      });
+    });
+  });
+});
+
+lab.test('path as option, default path is "/"', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {}
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.auth.strategy('password', 'password', true, {
+      path: '/path1/path2',
+      password: 'password',
+      salt: 'here is a salt',
+      cookieName: 'demo-login',
+      ttl: 1000 * 60 * 5,
+      queryKey: 'token',
+      loginForm: {
+        name: 'hapi-password example',
+        description: 'password is password.  duh',
+        askName: true
+      }
+    });
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        code.expect(response.headers.location).to.equal('/success');
+        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+        code.expect(response.headers['set-cookie'][1]).to.include('Path=/path1/path2');
+        done();
       });
     });
   });
