@@ -69,6 +69,7 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
       cookieName: 'demo-login',
       ttl: 1000 * 60 * 5,
       queryKey: 'token',
+      isSecure: true,
       loginForm: {
         name: 'hapi-password example',
         description: 'password is password.  duh',
