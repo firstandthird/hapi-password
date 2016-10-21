@@ -1,4 +1,13 @@
 
+2.1.0 / 2016-10-21
+==================
+
+  * updated readme
+  * path defaults to /
+  * ttl defaults to 30 days
+  * name and password use same ttl
+  * updated to hapi 15, set isSecure to false
+
 2.0.0 / 2016-07-05
 ==================
 
