@@ -17,6 +17,7 @@ lab.afterEach((done) => {
     done();
   });
 });
+
 lab.test('should redirect if credentials not posted ', (done) => {
   server.register({
     register: hapiPassword,
@@ -163,6 +164,65 @@ lab.test('allows login when credentials are posted ', (done) => {
     });
   });
 });
+
+lab.test('login route redirects if user already logged in ', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {}
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.auth.strategy('password', 'password', true, {
+      password: 'password',
+      salt: 'here is a salt',
+      cookieName: 'demo-login',
+      ttl: 1000 * 60 * 5,
+      queryKey: 'token',
+      loginForm: {
+        name: 'hapi-password example',
+        description: 'password is password.  duh',
+        askName: true
+      },
+      successEndpoint: '/success'
+    });
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+        server.inject({
+          url: '/login',
+          method: 'GET',
+          headers: {
+            Cookie: cookieString
+          }
+        }, (getResponse) => {
+          code.expect(getResponse.statusCode).to.equal(302);
+          code.expect(getResponse.headers.location).to.equal('/success');
+          done();
+        });
+      });
+    });
+  });
+});
+
 lab.test('allows you to specify multiple credentials to match against ', (done) => {
   server.register({
     register: hapiPassword,
