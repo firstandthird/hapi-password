@@ -22,7 +22,6 @@
     "eslint": "^3.4.0",
     "eslint-config-firstandthird": "^3.0.2",
     "eslint-plugin-import": "^1.14.0",
-    "hapi": "^13.4.1",
     "lab": "^10.8.2",
     "nodemon": "1.9.2"
   },
