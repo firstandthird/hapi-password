@@ -26,7 +26,7 @@ lab.test('should redirect if credentials not posted ', (done) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
+    server.auth.strategy('password', 'password', 'try', {
       password: 'password',
       salt: 'here is a salt',
       cookieName: 'demo-login',
