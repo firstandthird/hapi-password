@@ -187,6 +187,7 @@ lab.test('login route redirects if user already logged in ', (done) => {
       }
     });
     server.start(() => {
+      console.log('++++++')
       server.inject({
         url: '/login',
         method: 'POST',
@@ -196,8 +197,9 @@ lab.test('login route redirects if user already logged in ', (done) => {
           next: '/success'
         }
       }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
+        console.log(response.statusMessage)
         console.log(response.headers)
+        code.expect(response.statusCode).to.equal(302);
         return done();
         const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
         server.inject({
