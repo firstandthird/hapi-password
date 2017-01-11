@@ -29,18 +29,6 @@ lab.test('should redirect if credentials not posted ', (done) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/',
@@ -59,27 +47,18 @@ lab.test('should redirect if credentials not posted ', (done) => {
     });
   });
 });
+
 lab.test('passes back a security cookie when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      cookieName: 'demo-login',
+      isSecure: true
+    }
   }, (err) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      isSecure: true,
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/success',
@@ -109,26 +88,18 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
     });
   });
 });
+
 lab.test('allows login when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      cookieName: 'demo-login',
+      isSecure: true
+    }
   }, (err) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/success',
@@ -167,7 +138,8 @@ lab.test('allows login when credentials are posted ', (done) => {
     });
   });
 });
-lab.test('allows you to specify multiple credentials to match against ', (done) => {
+
+lab.test('login route redirects if user already logged in ', (done) => {
   server.register({
     register: hapiPassword,
     options: {}
@@ -175,7 +147,48 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        auth: 'password',
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        code.expect(response.headers.location).to.equal('/success');
+        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+        server.inject({
+          url: '/login',
+          method: 'GET',
+          headers: {
+            Cookie: cookieString
+          }
+        }, (getResponse) => {
+          code.expect(getResponse.statusCode).to.equal(302);
+          done();
+        });
+      });
+    });
+  });
+});
+
+lab.test('allows you to specify multiple credentials to match against ', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {
       password: {
         'a password': {
           // some optional credentials information:
@@ -186,16 +199,12 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
           name: 'Interrupting Cow'
         }
       },
-      salt: 'here is a salt',
       cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
+    }
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
     server.route({
       method: 'GET',
       path: '/success',
@@ -234,15 +243,12 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
     });
   });
 });
+
 lab.test('returns the correct credentials for a given password ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.auth.strategy('password', 'password', true, {
+    options: {
+      cookieName: 'demo-login',
       password: {
         'a password': {
           // some optional credentials information:
@@ -254,17 +260,12 @@ lab.test('returns the correct credentials for a given password ', (done) => {
           name: 'Interrupting Cow',
           role: 'admin'
         }
-      },
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
       }
-    });
+    }
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
     server.route({
       method: 'GET',
       path: '/success',
@@ -306,26 +307,18 @@ lab.test('returns the correct credentials for a given password ', (done) => {
     });
   });
 });
+
 lab.test('allows login when credentials are posted even if name has a space in it', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      cookieName: 'demo-login',
+      queryKey: 'token'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/success',
@@ -364,28 +357,18 @@ lab.test('allows login when credentials are posted even if name has a space in i
     });
   });
 });
+
 lab.test('able to pass in isSecure option to cookie setting', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      isSecure: false,
+      cookieName: 'demo-login'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      // turn off the isSecure option, by default it will be true:
-      isSecure: false,
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/success',
@@ -420,24 +403,14 @@ lab.test('able to pass in isSecure option to cookie setting', (done) => {
 lab.test('path as option, default path is "/"', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      path: '/path1/path2',
+      cookieName: 'demo-login'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      path: '/path1/path2',
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.route({
       method: 'GET',
       path: '/success',
@@ -478,19 +451,6 @@ lab.test('option to log failed passwords', (done) => {
     if (err) {
       console.log(err);
     }
-    server.auth.strategy('password', 'password', true, {
-      password: 'password',
-      salt: 'here is a salt',
-      cookieName: 'demo-login',
-      ttl: 1000 * 60 * 5,
-      queryKey: 'token',
-      isSecure: true,
-      loginForm: {
-        name: 'hapi-password example',
-        description: 'password is password.  duh',
-        askName: true
-      }
-    });
     server.start(() => {
       server.inject({
         url: '/login',
