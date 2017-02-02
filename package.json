@@ -13,18 +13,18 @@
   "homepage": "https://github.com/firstandthird/hapi-password",
   "dependencies": {
     "handlebars": "^4.0.5",
-    "hapi": "^15.1.1",
+    "hapi": "^16.0.2",
     "hoek": "^4.0.1",
     "lodash": "^4.13.1"
   },
   "devDependencies": {
-    "code": "^3.0.1",
-    "eslint": "^3.9.1",
+    "code": "^4.0.0",
+    "eslint": "^3.4.0",
     "eslint-config-firstandthird": "^3.0.2",
-    "eslint-plugin-import": "^2.1.0",
-    "hapi": "^13.4.1",
-    "lab": "^10.8.2",
-    "nodemon": "1.9.2"
+    "eslint-plugin-import": "^2.2.0",
+    "hapi": "^16.0.2",
+    "lab": "^11.2.1",
+    "nodemon": "1.11.0"
   },
   "keywords": [
     "hapi",
