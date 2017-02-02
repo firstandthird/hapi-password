@@ -45,6 +45,23 @@ lab.test('should redirect if credentials not posted ', (done) => {
   });
 });
 
+lab.test('should not redirect /login if credentials not posted ', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {}
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.inject({
+      url: '/login'
+    }, (response) => {
+      code.expect(response.statusCode).to.equal(200);
+      done();
+    });
+  });
+});
+
 lab.test('passes back a security cookie when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
