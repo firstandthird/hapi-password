@@ -7,6 +7,9 @@ const hapiPassword = require('../index.js');
 let server;
 lab.beforeEach((done) => {
   server = new Hapi.Server({
+    debug: {
+      log: ['hapi-password']
+    }
   });
   server.connection({ port: 8080 });
   done();
@@ -449,6 +452,33 @@ lab.test('path as option, default path is "/"', (done) => {
         code.expect(response.headers['set-cookie']).to.not.equal(undefined);
         code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
         code.expect(response.headers['set-cookie'][1]).to.include('Path=/path1/path2');
+        done();
+      });
+    });
+  });
+});
+
+lab.test('option to log failed passwords', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {
+      logFailedAttempts: true
+    }
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'incorrect',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
         done();
       });
     });
