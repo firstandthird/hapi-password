@@ -13,18 +13,6 @@ server.register({
   options: {
   }
 }, () => {
-  server.auth.strategy('password', 'password', true, {
-    password: 'password',
-    salt: 'here is a salt',
-    cookieName: 'demo-login',
-    ttl: 1000 * 60 * 5,
-    queryKey: 'token',
-    loginForm: {
-      name: 'hapi-password example',
-      description: 'password is password.  duh',
-      askName: true
-    }
-  });
 
   server.route({
     method: 'GET',
