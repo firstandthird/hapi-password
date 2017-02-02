@@ -1,4 +1,13 @@
 
+3.2.0 / 2017-02-02
+==================
+
+  * refactored into separate files
+  * renderLogin for both /login and strategy
+  * add test
+  * update example\server.js
+  * chore(package): update dependencies
+
 3.1.0 / 2017-01-12
 ==================
 
