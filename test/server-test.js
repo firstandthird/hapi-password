@@ -459,6 +459,13 @@ lab.test('path as option, default path is "/"', (done) => {
 });
 
 lab.test('option to log failed passwords', (done) => {
+  const results = [];
+  const oldLog = console.error;
+  console.error = (t1, t2, t3) => {
+    results.push(t1);
+    results.push(t2);
+    results.push(t3);
+  };
   server.register({
     register: hapiPassword,
     options: {
@@ -478,7 +485,10 @@ lab.test('option to log failed passwords', (done) => {
           next: '/success'
         }
       }, (response) => {
+        console.error = oldLog;
         code.expect(response.statusCode).to.equal(302);
+        code.expect(results.length).to.equal(3);
+        code.expect(results[2]).to.include('Failed login at');
         done();
       });
     });
