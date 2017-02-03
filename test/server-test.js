@@ -484,3 +484,47 @@ lab.test('option to log failed passwords', (done) => {
     });
   });
 });
+
+lab.test('can stay logged in with "?token="', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {}
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        auth: 'password',
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        code.expect(response.headers.location).to.equal('/success');
+        const cookieString = `${response.headers['set-cookie'][0].split(';')[0].split('=')[1]};`;
+        server.inject({
+          url: `/login?token=${cookieString}`,
+          method: 'GET',
+        }, (getResponse) => {
+          code.expect(getResponse.statusCode).to.equal(302);
+          code.expect(response.headers.location).to.equal('/success');
+          done();
+        });
+      });
+    });
+  });
+});
