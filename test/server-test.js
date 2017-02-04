@@ -156,6 +156,75 @@ lab.test('allows login when credentials are posted ', (done) => {
   });
 });
 
+lab.test('allows login and logout ', (done) => {
+  server.register({
+    register: hapiPassword,
+    options: {
+      cookieName: 'demo-login',
+      isSecure: true
+    }
+  }, (err) => {
+    if (err) {
+      console.log(err);
+    }
+    server.route({
+      method: 'GET',
+      path: '/success',
+      config: {
+        handler: (request, reply) => {
+          return reply('success!');
+        }
+      }
+    });
+    server.start(() => {
+      server.inject({
+        url: '/login',
+        method: 'POST',
+        payload: {
+          name: 'somename',
+          password: 'password',
+          next: '/success'
+        }
+      }, (response) => {
+        code.expect(response.statusCode).to.equal(302);
+        code.expect(response.headers.location).to.equal('/success');
+        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+        server.inject({
+          url: '/success',
+          headers: {
+            Cookie: cookieString
+          }
+        }, (getResponse) => {
+          code.expect(getResponse.statusCode).to.equal(200);
+          code.expect(getResponse.result).to.equal('success!');
+          server.inject({
+            url: '/logout',
+            headers: {
+              Cookie: cookieString
+            }
+          }, (getResponse2) => {
+            code.expect(getResponse2.statusCode).to.equal(302);
+            code.expect(getResponse2.headers['set-cookie'][0]).to.include('demo-login=;');
+            const cookieString2 = `${getResponse2.headers['set-cookie'][0].split(';')[0]};`;
+            server.inject({
+              url: '/success',
+              headers: {
+                Cookie: cookieString2
+              }
+            }, (loggedOutResponse) => {
+              code.expect(loggedOutResponse.statusCode).to.equal(302);
+              code.expect(loggedOutResponse.headers.location).to.equal('/login?next=/success');
+              done();
+            });
+          });
+        });
+      });
+    });
+  });
+});
+
 lab.test('login route redirects if user already logged in ', (done) => {
   server.register({
     register: hapiPassword,
