@@ -69,8 +69,7 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
   server.register({
     register: hapiPassword,
     options: {
-      cookieName: 'demo-login',
-      isSecure: true
+      cookieName: 'demo-login'
     }
   }, (err) => {
     if (err) {
@@ -110,8 +109,7 @@ lab.test('allows login when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
     options: {
-      cookieName: 'demo-login',
-      isSecure: true
+      cookieName: 'demo-login'
     }
   }, (err) => {
     if (err) {
@@ -160,8 +158,7 @@ lab.test('allows login and logout ', (done) => {
   server.register({
     register: hapiPassword,
     options: {
-      cookieName: 'demo-login',
-      isSecure: true
+      cookieName: 'demo-login'
     }
   }, (err) => {
     if (err) {
@@ -439,48 +436,6 @@ lab.test('allows login when credentials are posted even if name has a space in i
           code.expect(getResponse.result).to.equal('success!');
           done();
         });
-      });
-    });
-  });
-});
-
-lab.test('able to pass in isSecure option to cookie setting', (done) => {
-  server.register({
-    register: hapiPassword,
-    options: {
-      isSecure: false,
-      cookieName: 'demo-login'
-    }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
-        // will not contain the Secure header:
-        code.expect(response.headers['set-cookie'][0]).to.not.include('Secure;');
-        done();
       });
     });
   });
