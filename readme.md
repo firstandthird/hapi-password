@@ -76,5 +76,5 @@ server.register({
 ## 4. Registration Options
 
   Thse are options that you can pass to your call to server.register, when registering the plugin:
-- __path__: the path of the authentication cookie (see https://www.nczonline.net/blog/2009/05/05/http-cookies-explained/ for help understanding cookie paths).  Default is '/'.
+- __cookiePath__: the path of the authentication cookie (see https://www.nczonline.net/blog/2009/05/05/http-cookies-explained/ for help understanding cookie paths).  Default is '/'.
 - __schemeName__: the name hapi will use to identify this authentication scheme, can be whatever you want.  The default is "password".

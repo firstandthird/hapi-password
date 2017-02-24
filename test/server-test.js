@@ -445,7 +445,7 @@ lab.test('path as option, default path is "/"', (done) => {
   server.register({
     register: hapiPassword,
     options: {
-      path: '/path1/path2',
+      cookiePath: '/path1/path2',
       cookieName: 'demo-login'
     }
   }, (err) => {
