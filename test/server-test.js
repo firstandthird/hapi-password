@@ -24,7 +24,10 @@ lab.afterEach((done) => {
 lab.test('should redirect if credentials not posted ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      salt: 'aSalt',
+      password: 'password'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
@@ -51,7 +54,10 @@ lab.test('should redirect if credentials not posted ', (done) => {
 lab.test('should not redirect /login if credentials not posted ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      salt: 'aSalt',
+      password: 'password'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
@@ -69,6 +75,8 @@ lab.test('passes back a security cookie when credentials are posted ', (done) =>
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
+      password: 'password',
       cookieName: 'demo-login'
     }
   }, (err) => {
@@ -109,6 +117,8 @@ lab.test('allows login when credentials are posted ', (done) => {
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
+      password: 'password',
       cookieName: 'demo-login'
     }
   }, (err) => {
@@ -158,6 +168,8 @@ lab.test('allows login and logout ', (done) => {
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
+      password: 'password',
       cookieName: 'demo-login'
     }
   }, (err) => {
@@ -225,7 +237,10 @@ lab.test('allows login and logout ', (done) => {
 lab.test('login route redirects if user already logged in ', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      salt: 'aSalt',
+      password: 'password'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
@@ -272,6 +287,7 @@ lab.test('allows you to specify multiple credentials to match against ', (done) 
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
       password: {
         'a password': {
           // some optional credentials information:
@@ -332,6 +348,7 @@ lab.test('returns the correct credentials for a given password ', (done) => {
     register: hapiPassword,
     options: {
       cookieName: 'demo-login',
+      salt: 'aSalt',
       password: {
         'a password': {
           // some optional credentials information:
@@ -395,6 +412,8 @@ lab.test('allows login when credentials are posted even if name has a space in i
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSlat',
+      password: 'password',
       cookieName: 'demo-login',
       queryKey: 'token'
     }
@@ -445,6 +464,8 @@ lab.test('path as option, default path is "/"', (done) => {
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
+      password: 'password',
       cookiePath: '/path1/path2',
       cookieName: 'demo-login'
     }
@@ -493,6 +514,8 @@ lab.test('option to log failed passwords', (done) => {
   server.register({
     register: hapiPassword,
     options: {
+      salt: 'aSalt',
+      password: 'password',
       logFailedAttempts: true
     }
   }, (err) => {
@@ -522,7 +545,10 @@ lab.test('option to log failed passwords', (done) => {
 lab.test('can stay logged in with "?token="', (done) => {
   server.register({
     register: hapiPassword,
-    options: {}
+    options: {
+      salt: 'aSalt',
+      password: 'password'
+    }
   }, (err) => {
     if (err) {
       console.log(err);
