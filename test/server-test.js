@@ -15,7 +15,7 @@ lab.beforeEach(async() => {
 });
 
 lab.afterEach(async() => server.stop());
-/*
+
 lab.test('should redirect if credentials not posted ', async() => {
   await server.register({
     plugin: hapiPassword,
@@ -36,8 +36,7 @@ lab.test('should redirect if credentials not posted ', async() => {
   code.expect(response.statusCode).to.equal(302);
   code.expect(response.headers.location).to.equal('/login?next=/');
 });
-*/
-/*
+
 lab.test('should not redirect /login if credentials not posted ', async() => {
   await server.register({
     plugin: hapiPassword,
@@ -127,7 +126,7 @@ lab.test('allows login when credentials are posted ', async() => {
   code.expect(getResponse.statusCode).to.equal(200);
   code.expect(getResponse.result).to.equal('success!');
 });
-*/
+
 lab.test('allows login and logout ', async() => {
   await server.register({
     plugin: hapiPassword,
@@ -182,10 +181,11 @@ lab.test('allows login and logout ', async() => {
       Cookie: cookieString2
     }
   });
+
   code.expect(loggedOutResponse.statusCode).to.equal(302);
   code.expect(loggedOutResponse.headers.location).to.equal('/login?next=/success');
 });
-/*
+
 lab.test('login route redirects if user already logged in ', async() => {
   server.register({
     register: hapiPassword,
@@ -540,4 +540,3 @@ lab.test('can stay logged in with "?token="', async() => {
     });
   });
 });
-*/
