@@ -5,7 +5,7 @@ const lab = exports.lab = require('lab').script();
 const hapiPassword = require('../index.js');
 
 let server;
-lab.beforeEach(async() => {
+lab.beforeEach(() => {
   server = new Hapi.Server({
     port: 8080,
     debug: {
@@ -14,7 +14,7 @@ lab.beforeEach(async() => {
   });
 });
 
-lab.afterEach(async() => server.stop());
+lab.afterEach(() => server.stop());
 
 lab.test('should redirect if credentials not posted ', async() => {
   await server.register({
@@ -62,9 +62,7 @@ lab.test('passes back a security cookie when credentials are posted ', async() =
     method: 'GET',
     path: '/success',
     config: {
-      handler: (request, h) => {
-        return 'success!';
-      }
+      handler: (request, h) => 'success!'
     }
   });
   await server.start();
@@ -97,9 +95,7 @@ lab.test('allows login when credentials are posted ', async() => {
     method: 'GET',
     path: '/success',
     config: {
-      handler: (request, h) => {
-        return 'success!';
-      }
+      handler: (request, h) => 'success!'
     }
   });
   await server.start();
