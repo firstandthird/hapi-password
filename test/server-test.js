@@ -139,9 +139,7 @@ lab.test('allows login and logout ', async() => {
   server.route({
     method: 'GET',
     path: '/success',
-    config: {
-      handler: (request, h) => 'success!'
-    }
+    handler: (request, h) => 'success!'
   });
   await server.start();
   const response = await server.inject({
@@ -187,57 +185,47 @@ lab.test('allows login and logout ', async() => {
 });
 
 lab.test('login route redirects if user already logged in ', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSalt',
       password: 'password'
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        auth: 'password',
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
-        server.inject({
-          url: '/login',
-          method: 'GET',
-          headers: {
-            Cookie: cookieString
-          }
-        }, (getResponse) => {
-          code.expect(getResponse.statusCode).to.equal(302);
-          done();
-        });
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      auth: 'password',
+      handler: (request, h) => 'success!'
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+  const getResponse = await server.inject({
+    url: '/login',
+    method: 'GET',
+    headers: {
+      Cookie: cookieString
+    }
+  });
+  code.expect(getResponse.statusCode).to.equal(302);
 });
 
 lab.test('allows you to specify multiple credentials to match against ', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSalt',
       password: {
@@ -252,52 +240,42 @@ lab.test('allows you to specify multiple credentials to match against ', async()
       },
       cookieName: 'demo-login',
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'another password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
-        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
-        server.inject({
-          url: response.headers.location,
-          headers: {
-            Cookie: cookieString
-          }
-        }, (getResponse) => {
-          code.expect(getResponse.statusCode).to.equal(200);
-          code.expect(getResponse.result).to.equal('success!');
-          done();
-        });
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      handler: (request, h) => 'success!'
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'another password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+  code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+  const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+  const getResponse = await server.inject({
+    url: response.headers.location,
+    headers: {
+      Cookie: cookieString
+    }
+  });
+  code.expect(getResponse.statusCode).to.equal(200);
+  code.expect(getResponse.result).to.equal('success!');
 });
 
 lab.test('returns the correct credentials for a given password ', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       cookieName: 'demo-login',
       salt: 'aSalt',
@@ -314,145 +292,116 @@ lab.test('returns the correct credentials for a given password ', async() => {
         }
       }
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        handler: (request, reply) => {
-          return reply(request.auth.credentials);
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'another password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
-        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
-        server.inject({
-          url: response.headers.location,
-          headers: {
-            Cookie: cookieString
-          }
-        }, (getResponse) => {
-          code.expect(getResponse.statusCode).to.equal(200);
-          // test will go here:
-          code.expect(typeof getResponse.result).to.equal('object');
-          code.expect(getResponse.result.name).to.equal('Interrupting Cow');
-          code.expect(getResponse.result.role).to.equal('admin');
-          done();
-        });
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      handler: (request, h) => request.auth.credentials
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'another password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+  code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+  const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+  const getResponse = await server.inject({
+    url: response.headers.location,
+    headers: {
+      Cookie: cookieString
+    }
+  });
+  code.expect(getResponse.statusCode).to.equal(200);
+  // test will go here:
+  code.expect(typeof getResponse.result).to.equal('object');
+  code.expect(getResponse.result.name).to.equal('Interrupting Cow');
+  code.expect(getResponse.result.role).to.equal('admin');
 });
 
 lab.test('allows login when credentials are posted even if name has a space in it', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSlat',
       password: 'password',
       cookieName: 'demo-login',
       queryKey: 'token'
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'No One',
-          password: 'password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
-        const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
-        server.inject({
-          url: response.headers.location,
-          headers: {
-            Cookie: cookieString
-          }
-        }, (getResponse) => {
-          code.expect(getResponse.statusCode).to.equal(200);
-          code.expect(getResponse.result).to.equal('success!');
-          done();
-        });
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      handler: (request, h) => 'success!'
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'No One',
+      password: 'password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+  code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+  const cookieString = `${response.headers['set-cookie'][0].split(';')[0]};`;
+  const getResponse = await server.inject({
+    url: response.headers.location,
+    headers: {
+      Cookie: cookieString
+    }
+  });
+  code.expect(getResponse.statusCode).to.equal(200);
+  code.expect(getResponse.result).to.equal('success!');
 });
 
 lab.test('path as option, default path is "/"', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSalt',
       password: 'password',
       cookiePath: '/path1/path2',
       cookieName: 'demo-login'
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        code.expect(response.headers['set-cookie']).to.not.equal(undefined);
-        code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
-        code.expect(response.headers['set-cookie'][1]).to.include('Path=/path1/path2');
-        done();
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      handler: (request, h) => 'success!'
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  code.expect(response.headers['set-cookie']).to.not.equal(undefined);
+  code.expect(response.headers['set-cookie'][0]).to.include('demo-login');
+  code.expect(response.headers['set-cookie'][1]).to.include('Path=/path1/path2');
 });
 
 lab.test('option to log failed passwords', async() => {
@@ -463,80 +412,63 @@ lab.test('option to log failed passwords', async() => {
     results.push(t2);
     results.push(t3);
   };
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSalt',
       password: 'password',
       logFailedAttempts: true
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'incorrect',
-          next: '/success'
-        }
-      }, (response) => {
-        console.error = oldLog;
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(results.length).to.equal(3);
-        code.expect(results[2]).to.include('Failed login at');
-        done();
-      });
-    });
   });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'incorrect',
+      next: '/success'
+    }
+  });
+  console.error = oldLog;
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(results.length).to.equal(3);
+  code.expect(results[2]).to.include('Failed login at');
 });
 
 lab.test('can stay logged in with "?token="', async() => {
-  server.register({
-    register: hapiPassword,
+  await server.register({
+    plugin: hapiPassword,
     options: {
       salt: 'aSalt',
       password: 'password'
     }
-  }, (err) => {
-    if (err) {
-      console.log(err);
-    }
-    server.route({
-      method: 'GET',
-      path: '/success',
-      config: {
-        auth: 'password',
-        handler: (request, reply) => {
-          return reply('success!');
-        }
-      }
-    });
-    server.start(() => {
-      server.inject({
-        url: '/login',
-        method: 'POST',
-        payload: {
-          name: 'somename',
-          password: 'password',
-          next: '/success'
-        }
-      }, (response) => {
-        code.expect(response.statusCode).to.equal(302);
-        code.expect(response.headers.location).to.equal('/success');
-        const cookieString = `${response.headers['set-cookie'][0].split(';')[0].split('=')[1]};`;
-        server.inject({
-          url: `/login?token=${cookieString}`,
-          method: 'GET',
-        }, (getResponse) => {
-          code.expect(getResponse.statusCode).to.equal(302);
-          code.expect(response.headers.location).to.equal('/success');
-          done();
-        });
-      });
-    });
   });
+  server.route({
+    method: 'GET',
+    path: '/success',
+    config: {
+      auth: 'password',
+      handler: (request, h) => 'success!'
+    }
+  });
+  await server.start();
+  const response = await server.inject({
+    url: '/login',
+    method: 'POST',
+    payload: {
+      name: 'somename',
+      password: 'password',
+      next: '/success'
+    }
+  });
+  code.expect(response.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
+  const cookieString = `${response.headers['set-cookie'][0].split(';')[0].split('=')[1]};`;
+  const getResponse = await server.inject({
+    url: `/login?token=${cookieString}`,
+    method: 'GET',
+  });
+  code.expect(getResponse.statusCode).to.equal(302);
+  code.expect(response.headers.location).to.equal('/success');
 });
