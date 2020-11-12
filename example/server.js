@@ -1,6 +1,6 @@
-'use strict';
-const Hapi = require('hapi');
-const server = new Hapi.Server();
+/* eslint-disable no-console */
+const Hapi = require('@hapi/hapi');
+const server = Hapi.server();
 server.connection({
   port: 8000,
   state: {
@@ -13,7 +13,6 @@ server.register({
   options: {
   }
 }, () => {
-
   server.route({
     method: 'GET',
     path: '/',

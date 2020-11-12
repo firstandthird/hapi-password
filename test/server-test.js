@@ -1,12 +1,12 @@
-'use strict';
-const Hapi = require('hapi');
-const code = require('code');
-const lab = exports.lab = require('lab').script();
-const hapiPassword = require('../index.js');
+/* eslint-disable no-console */
+const Hapi = require('@hapi/hapi');
+const code = require('@hapi/code');
+const lab = exports.lab = require('@hapi/lab').script();
+const hapiPassword = require('..');
 
 let server;
 lab.beforeEach(() => {
-  server = new Hapi.Server({
+  server = Hapi.server({
     port: 8080,
     debug: {
       log: ['hapi-password']
