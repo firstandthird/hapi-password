@@ -1,19 +1,31 @@
-# hapi-password  
+<h1 align="center">hapi-password</h1>
+
+<p align="center">
+  <a href="https://github.com/firstandthird/hapi-password/actions">
+    <img src="https://img.shields.io/github/workflow/status/firstandthird/hapi-password/Test/main?label=Tests&style=for-the-badge" alt="Test Status"/>
+  </a>
+  <a href="https://github.com/firstandthird/hapi-password/actions">
+    <img src="https://img.shields.io/github/workflow/status/firstandthird/hapi-password/Lint/main?label=Lint&style=for-the-badge" alt="Lint Status"/>
+  </a>
+</p>
 
 
-[![Build Status](https://travis-ci.org/firstandthird/hapi-password.svg?branch=master)](https://travis-ci.org/firstandthird/hapi-password)
+A Hapi plugin that provides an easy-to-use password authentication scheme and login page for your routes.
 
 
-### A Hapi plugin that provides an easy-to-use password authentication scheme and login page for your routes.  
+## Install
 
-
-## 1. Install
-
-```
+```sh
 npm install hapi-password
 ```
 
-## 2. Use
+_or_
+
+```sh
+yarn add hapi-password
+```
+
+## Usage
 
 ```js
 // register the plugin with your hapi server:
@@ -63,7 +75,7 @@ server.register({
 
    See the example folder and the unit tests in test/server-test.js for more examples.
 
-## 3. Strategy options
+## Strategy options
   These are options that you can pass to your call to server.auth.strategy:
 
 - __password__: a password or map of passwords -> user credentials. If only one password is provided, then all users will share that one common password and one common account. Alternatively you can provide an object, where the keys are the passwords and the values are the [hapi user credentials](http://hapijs.com/tutorials/auth#authenticate) object associated with that password.
@@ -73,8 +85,15 @@ server.register({
 - __queryKey__: the query parameter that specifies the key
 - __loginForm__: data to pass to the login.html view
 
-## 4. Registration Options
+## Registration Options
 
   Thse are options that you can pass to your call to server.register, when registering the plugin:
 - __cookiePath__: the path of the authentication cookie (see https://www.nczonline.net/blog/2009/05/05/http-cookies-explained/ for help understanding cookie paths).  Default is '/'.
 - __schemeName__: the name hapi will use to identify this authentication scheme, can be whatever you want.  The default is "password".
+
+
+---
+
+<a href="https://firstandthird.com"><img src="https://firstandthird.com/_static/ui/images/safari-pinned-tab-62813db097.svg" height="32" width="32" align="right"></a>
+
+_A [First + Third](https://firstandthird.com) Project_
